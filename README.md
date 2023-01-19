@@ -1,6 +1,6 @@
 ## Amazon S3 Default Encryption Audit
 
-- This script will allow you to audit your Amazon S3 bucket's default encryption and the [Amazon S3 Bucket Key](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html) configuration for all buckets in all regions.
+- This script will allow you to audit your [Amazon S3](https://aws.amazon.com/s3/) bucket's default encryption and the [Amazon S3 Bucket Key](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html) configuration for all buckets in all regions.
 - The script is configured to list all your buckets in all regions, then retrieve teh 
 - You will need to **modify line 10** in the script with the location that you want the output to be saved. 
 - This script will NOT make any changes to AWS resources. 
