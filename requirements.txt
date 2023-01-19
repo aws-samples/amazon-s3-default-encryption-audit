@@ -1,0 +1,2 @@
+boto3==1.17.91
+botocore.exceptions import ClientError==1.23.19
