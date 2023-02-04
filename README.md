@@ -17,7 +17,7 @@ This script will perform read-only calls. No changes will be made to your resour
   * An AWS account.
   * Amazon S3 bucket.
   * [Python3](https://www.python.org/downloads/) installed on your local machine. 
-  * [AWS credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) configured on your computer.
+  * [AWS credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) to access your AWS account.
   * Access to the **us-east-1** AWS Region.
   * Permissions to perform the following actions:
     * **s3:ListAllMyBuckets**
@@ -58,12 +58,12 @@ You also need to ensure that the SSE-KMS customer managed keys allow the IAM rol
 
 ## Walkthrough
 
-<details><summary>1) Download the script</summary><p>
-Click [here](https://github.com/aws-samples/amazon-s3-default-encryption-audit) to download the script. 
+<details><summary>1) Download the script</summary>
+ <p>Download the amazon_s3_default_encryption_audit.py script to your device. 
 </p></details>
 
 <details><summary>2) Execute the script</summary><p>
- 1)	Open a terminal session on the device where the script is saved. 
+ 1)	Open a terminal session and navigate to the path where the script is saved. 
  2) Execute the script by running the following command:
 
 ```
