@@ -97,10 +97,10 @@ You will find the following example data:
 | bucketA	| AES256	| N/A |                 | 
 | bucketB	| SSEConfigNotFound	| N/A |       | 	
 | bucketC	| AccessDenied	| Unknown	|       |
-| bucketD	| arn:aws:kms:us-west-1:12345678908:key/111aa2bb-333c-4d44-cbb88fb2f31e	| AccessDenied	| True |
-| bucketE	| arn:aws:kms:us-east-1:12345678908:key/111aa2bb-333c-4d44-…	| CUSTOMER	| True     | 
-| bucketF	| arn:aws:kms:ap-south-1:12345678908:key/666ww7xx-888y-9z99-…	| AWS 	|              | 
-| bucketG	| arn:aws:kms:eu-east-2:98765432101:key/999ff5gg-000h-2i22-…	| Customer	| False    | 
+| bucketD	| arn:aws:kms:us-west-1:12345678908:key/da3f83a2-90c5-84e4-cbb88fb2f31e	| AccessDenied	| True |
+| bucketE	| arn:aws:kms:us-west-1:12345678908:key/da3f83a2-90c5-84e4-cbb88fb2f31e	| CUSTOMER	| True     | 
+| bucketF	| arn:aws:kms:ap-south-1:12345678908:key/c50cbc1e-f613-9564-f5b348ab7fc7 | AWS 	|              | 
+| bucketG	| arn:aws:kms:eu-east-2:98765432101:key/aa00aaff-e37b-bab2-c99463f5774c	| Customer	| False    | 
 
 The report is divided into four columns:
 
