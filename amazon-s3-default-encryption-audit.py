@@ -4,10 +4,6 @@ import boto3
 from botocore.exceptions import ClientError
 import time
 import os
-import csv
-import json
-from re import search
-
 
 
 # Print instructions for using the script.
