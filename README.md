@@ -16,8 +16,8 @@ This script will perform read-only calls. No changes will be made to your resour
 
   * An AWS account.
   * Amazon S3 bucket.
-  * Python3 installed on your local machine. 
-  * AWS credentials to access your AWS account.
+  * [Python3](https://www.python.org/downloads/) installed on your local machine. 
+  * [AWS credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) configured on your computer.
   * Access to the **us-east-1** AWS Region.
   * Permissions to perform the following actions:
     * **s3:ListAllMyBuckets**
@@ -26,9 +26,7 @@ This script will perform read-only calls. No changes will be made to your resour
     * **kms:DescribeKey**
 
 The IAM policy for the IAM user or role that is running this script needs to have the following minimum Amazon S3 and AWS KMS permissions to retrieve the required information. 
-
-The IAM policy for the IAM user or role that is running this script needs to have the following minimum Amazon S3 and AWS KMS permissions to retrieve the required information. 
-
+ 
 ```
 {
   "Version": "2012-10-17",
