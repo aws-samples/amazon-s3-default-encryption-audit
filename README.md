@@ -112,7 +112,7 @@ Column B can contain the following values:
   
 Column C can the contain the following values:
 
-  * **CUSTOMER: indicates that the AWS KMS Key is an SSE-KMS customer managed key.
+  * **CUSTOMER:** indicates that the AWS KMS Key is an SSE-KMS customer managed key.
   * **AWS:** indicates that the AWS KMS Key is an SSE-KMS AWS managed key. 
   * **N/A:** indicates that SSE-KMS is not configured. 
   * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the **DescribeKey** API call or that the AWS KMS key is located in a different AWS Region than the Amazon S3 bucket. 
