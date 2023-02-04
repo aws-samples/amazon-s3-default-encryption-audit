@@ -10,9 +10,9 @@ The following services are used to audit the default server-side encryption mode
 
 This script will perform read-only calls. No changes will be made to your resources.
 
-<details><summary>Prerequisites</summary>
-<p>
-You should have the following prerequisites: 
+<details><summary>Prerequisites</summary><p>
+ 
+ You should have the following prerequisites: 
 
   * An AWS account.
   * Amazon S3 bucket.
@@ -55,12 +55,14 @@ The IAM policy for the IAM user or role that is running this script needs to hav
 ```
 
 You also need to ensure that the SSE-KMS customer managed keys allow the IAM role or user access as well. Click [here](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-administrators) for more information about creating a KMS Key policy. 
-</p>
-</details>
+ 
+</p></details>
 
 ## Walkthrough
-### 1) Download the script
+
+<details><summary>1) Download the script</summary><p>
 Click [here](https://github.com/aws-samples/amazon-s3-default-encryption-audit) to download the script. 
+</p></details>
 
 ### 2) Execute the script
   1)	Open a terminal session on the device where the script is saved. 
@@ -68,17 +70,22 @@ Click [here](https://github.com/aws-samples/amazon-s3-default-encryption-audit) 
 
 ```
 $ python3 audit_s3_default_encryption.py
-
 ```
   3)	Input an output location for the report.
     
 ```
 Linux/Mac:  /home/documents/output/
-Windows:  c:/users/jsmith/documents/output/    
+Windows:  c:/users/jsmith/documents/output/
+
+Output Location:  /scripts/outputs/
 ```
     
   4)	Wait for the script to complete. Depending on the amount of buckets and AWS KMS keys that you have configured, this can take several minutes. 
   5)	Navigate to the output location and open the report.
+```
+You can now access the report in the following location:
+/scripts/outputs/bucketEncryptionReport_20230201-000000.csv
+```
 
 ### 3) Analyze the report
 You will find the following example data:
@@ -88,12 +95,10 @@ You will find the following example data:
 | bucketA	| AES256	| N/A |                 | 
 | bucketB	| SSEConfigNotFound	| N/A |       | 	
 | bucketC	| AccessDenied	| Unknown	|       |
-| bucketD	| arn:aws:kms:us-west-1:12345678908:key/111aa2bb-333c-4d44-…	| AccessDenied	| True |
+| bucketD	| arn:aws:kms:us-west-1:12345678908:key/111aa2bb-333c-4d44-cbb88fb2f31e	| AccessDenied	| True |
 | bucketE	| arn:aws:kms:us-east-1:12345678908:key/111aa2bb-333c-4d44-…	| CUSTOMER	| True     | 
 | bucketF	| arn:aws:kms:ap-south-1:12345678908:key/666ww7xx-888y-9z99-…	| AWS 	|              | 
 | bucketG	| arn:aws:kms:eu-east-2:98765432101:key/999ff5gg-000h-2i22-…	| Customer	| False    | 
-
-The report is divided into four columns:
 
 The report is divided into four columns:
 
@@ -102,7 +107,7 @@ The report is divided into four columns:
   * **Column C:** customer managed key or an AWS managed key
   * **Column D:** bucket key configuration
   
-Column B can contain the following values:
+### Column B
 
   * **AWS KMS Key ARN:** provides the ARN for the KMS Key that is configured in the bucket’s default encryption configuration. 
   * **AWS KMS Key Alias:** provides the alias for the KMS Key that is configured in the bucket’s default encryption configuration. 
@@ -110,7 +115,7 @@ Column B can contain the following values:
   * **SSEConfigNotFound:** indicates that the bucket has no default encryption configurations.
   * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the GetBucketEncryption API call.
   
-Column C can the contain the following values:
+### Column C
 
   * **CUSTOMER:** indicates that the AWS KMS Key is an SSE-KMS customer managed key.
   * **AWS:** indicates that the AWS KMS Key is an SSE-KMS AWS managed key. 
@@ -118,7 +123,7 @@ Column C can the contain the following values:
   * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the **DescribeKey** API call or that the AWS KMS key is located in a different AWS Region than the Amazon S3 bucket. 
   * **Unknown:** indicates that the **DescribeKey** API call could not be performed because the **GetBucketEncryption** API call failed. 
 
-Column D can the following values:
+### Column D 
 
   * **Null:** indicates that Bucket Key was never configured on this bucket. 
   * **True:** indicates that Bucket Key is configured on this bucket. 
