@@ -5,8 +5,8 @@ In this post, I will describe how to audit an Amazon S3 bucket’s default encry
 
 The following services are used to audit the default server-side encryption mode:
 
-  •	[Amazon S3](https://aws.amazon.com/s3/?nc=sn&loc=1)
-  •	[AWS KMS](https://aws.amazon.com/kms/)
+  * [Amazon S3](https://aws.amazon.com/s3/?nc=sn&loc=1)
+  * [AWS KMS](https://aws.amazon.com/kms/)
 
 This script will perform read-only calls. No changes will be made to your resources.
 
@@ -14,16 +14,16 @@ This script will perform read-only calls. No changes will be made to your resour
 <p>
 You should have the following prerequisites: 
 
-  •	An AWS account.
-  •	Amazon S3 bucket.
-  •	Python3 installed on your local machine. 
-  •	AWS credentials to access your AWS account.
-  •	Access to the **us-east-1** AWS Region.
-  •	Permissions to perform the following actions:
-    o	**s3:ListAllMyBuckets**
-    o	**s3:GetBucketLocation**
-    o	**s3:GetEncryptionConfiguration**
-    o	**kms:DescribeKey**
+  * An AWS account.
+  * Amazon S3 bucket.
+  * Python3 installed on your local machine. 
+  * AWS credentials to access your AWS account.
+  * Access to the **us-east-1** AWS Region.
+  * Permissions to perform the following actions:
+    * **s3:ListAllMyBuckets**
+    * **s3:GetBucketLocation**
+    * **s3:GetEncryptionConfiguration**
+    * **kms:DescribeKey**
 
 The IAM policy for the IAM user or role that is running this script needs to have the following minimum Amazon S3 and AWS KMS permissions to retrieve the required information. 
 
@@ -97,32 +97,32 @@ The report is divided into four columns:
 
 The report is divided into four columns:
 
-  •	**Column A:** bucket name
-  •	**Column B:** default bucket encryption mode
-  •	**Column C:** customer managed key or an AWS managed key
-  •	**Column D:** bucket key configuration
+  * **Column A:** bucket name
+  * **Column B:** default bucket encryption mode
+  * **Column C:** customer managed key or an AWS managed key
+  * **Column D:** bucket key configuration
   
 Column B can contain the following values:
 
-  •	**AWS KMS Key ARN:** provides the ARN for the KMS Key that is configured in the bucket’s default encryption configuration. 
-  •	**AWS KMS Key Alias:** provides the alias for the KMS Key that is configured in the bucket’s default encryption configuration. 
-  •	**AES256:** indicates that the bucket is configured with SSE-S3 encryption. 
-  •	**SSEConfigNotFound:** indicates that the bucket has no default encryption configurations.
-  •	**AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the GetBucketEncryption API call.
+  * **AWS KMS Key ARN:** provides the ARN for the KMS Key that is configured in the bucket’s default encryption configuration. 
+  * **AWS KMS Key Alias:** provides the alias for the KMS Key that is configured in the bucket’s default encryption configuration. 
+  * **AES256:** indicates that the bucket is configured with SSE-S3 encryption. 
+  * **SSEConfigNotFound:** indicates that the bucket has no default encryption configurations.
+  * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the GetBucketEncryption API call.
   
 Column C can the contain the following values:
 
-  •	**CUSTOMER: indicates that the AWS KMS Key is an SSE-KMS customer managed key.
-  •	**AWS:** indicates that the AWS KMS Key is an SSE-KMS AWS managed key. 
-  •	**N/A:** indicates that SSE-KMS is not configured. 
-  •	**AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the **DescribeKey** API call or that the AWS KMS key is located in a different AWS Region than the Amazon S3 bucket. 
-  •	**Unknown:** indicates that the **DescribeKey** API call could not be performed because the **GetBucketEncryption** API call failed. 
+  * **CUSTOMER: indicates that the AWS KMS Key is an SSE-KMS customer managed key.
+  * **AWS:** indicates that the AWS KMS Key is an SSE-KMS AWS managed key. 
+  * **N/A:** indicates that SSE-KMS is not configured. 
+  * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the **DescribeKey** API call or that the AWS KMS key is located in a different AWS Region than the Amazon S3 bucket. 
+  * **Unknown:** indicates that the **DescribeKey** API call could not be performed because the **GetBucketEncryption** API call failed. 
 
 Column D can the following values:
 
-  •	**Null:** indicates that Bucket Key was never configured on this bucket. 
-  •	**True:** indicates that Bucket Key is configured on this bucket. 
-  •	**False:** indicates that Bucket Key was manually set to false.
+  * **Null:** indicates that Bucket Key was never configured on this bucket. 
+  * **True:** indicates that Bucket Key is configured on this bucket. 
+  * **False:** indicates that Bucket Key was manually set to false.
 
 This report can be used to standardize your default bucket encryption configurations across all buckets in all regions. You will be able to easily identify buckets that do not conform with your standardization requirements and identify buckets that do not have Amazon S3 Bucket Key enabled. Using the findings from this report, you will be able to create a plan to remediate buckets that do not follow your standardization requirements and buckets that are not taking advantage of Amazon S3 Bucket Key.
 
