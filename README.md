@@ -107,7 +107,7 @@ The report is divided into four columns:
   * **Column C:** customer managed key or an AWS managed key
   * **Column D:** bucket key configuration
   
-### Column B
+#### Column B
 
   * **AWS KMS Key ARN:** provides the ARN for the KMS Key that is configured in the bucket’s default encryption configuration. 
   * **AWS KMS Key Alias:** provides the alias for the KMS Key that is configured in the bucket’s default encryption configuration. 
@@ -115,7 +115,7 @@ The report is divided into four columns:
   * **SSEConfigNotFound:** indicates that the bucket has no default encryption configurations.
   * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the GetBucketEncryption API call.
   
-### Column C
+#### Column C
 
   * **CUSTOMER:** indicates that the AWS KMS Key is an SSE-KMS customer managed key.
   * **AWS:** indicates that the AWS KMS Key is an SSE-KMS AWS managed key. 
@@ -123,7 +123,7 @@ The report is divided into four columns:
   * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the **DescribeKey** API call or that the AWS KMS key is located in a different AWS Region than the Amazon S3 bucket. 
   * **Unknown:** indicates that the **DescribeKey** API call could not be performed because the **GetBucketEncryption** API call failed. 
 
-### Column D 
+#### Column D 
 
   * **Null:** indicates that Bucket Key was never configured on this bucket. 
   * **True:** indicates that Bucket Key is configured on this bucket. 
