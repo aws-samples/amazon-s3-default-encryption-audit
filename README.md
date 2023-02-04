@@ -58,11 +58,11 @@ You also need to ensure that the SSE-KMS customer managed keys allow the IAM rol
 
 ## Walkthrough
 
-<details><summary>1) Download the script</summary>
+<details><summary>A) Download the script</summary>
  <p>Download the amazon_s3_default_encryption_audit.py script to your device. 
 </p></details>
 
-<details><summary>2) Execute the script</summary><p>
+<details><summary>B) Execute the script</summary><p>
  
   1. Open a terminal session and navigate to the path where the script is saved. 
   2. Execute the script by running the following command:
@@ -88,7 +88,7 @@ You can now access the report in the following location:
 ```
 </p></details>
 
-<details><summary>3) Analyze the report</summary><p>
+<details><summary>C) Analyze the report</summary><p>
 You will find the following example data:
 
 | **Column A** | **Column B** | **Column C** | **Column D** |
