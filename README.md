@@ -64,13 +64,13 @@ You also need to ensure that the SSE-KMS customer managed keys allow the IAM rol
 
 <details><summary>2) Execute the script</summary><p>
  
-  A. Open a terminal session and navigate to the path where the script is saved. 
-  B. Execute the script by running the following command:
+  1. Open a terminal session and navigate to the path where the script is saved. 
+  2. Execute the script by running the following command:
 
 ```
 $ python3 audit_s3_default_encryption.py
 ```
-  C. Input an output location for the report.
+  3. Input an output location for the report.
     
 ```
 Linux/Mac:  /home/documents/output/
@@ -79,8 +79,8 @@ Windows:  c:/users/jsmith/documents/output/
 Output Location:  /scripts/outputs/
 ```
     
-  D. Wait for the script to complete. Depending on the amount of buckets and AWS KMS keys that you have configured, this can take several minutes. 
-  E. Navigate to the output location and open the report.
+  4. Wait for the script to complete. 
+  5. Navigate to the output location and open the report.
 
 ```
 You can now access the report in the following location:
