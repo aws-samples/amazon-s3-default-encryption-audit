@@ -64,6 +64,7 @@ You also need to ensure that the SSE-KMS customer managed keys allow the IAM rol
 
 <details><summary>2) Execute the script</summary><p>
 1. Open a terminal session and navigate to the path where the script is saved. 
+ 
 2. Execute the script by running the following command:
 
 ```
