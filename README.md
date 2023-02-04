@@ -89,7 +89,7 @@ You can now access the report in the following location:
 ```
 </p></details>
 
-<details><summary3) Analyze the report</summary><p>
+<details><summary>3) Analyze the report</summary><p>
 You will find the following example data:
 
 | **Column A** | **Column B** | **Column C** | **Column D** |
