@@ -59,10 +59,10 @@ You also need to ensure that the SSE-KMS customer managed keys allow the IAM rol
 </details>
 
 ## Walkthrough
-### Download the script
+### 1) Download the script
 Click [here](https://github.com/aws-samples/amazon-s3-default-encryption-audit) to download the script. 
 
-### Execute the script
+### 2) Execute the script
   1)	Open a terminal session on the device where the script is saved. 
   2)	Execute the script by running the following command:
 
@@ -80,7 +80,7 @@ Windows:  c:/users/jsmith/documents/output/
   4)	Wait for the script to complete. Depending on the amount of buckets and AWS KMS keys that you have configured, this can take several minutes. 
   5)	Navigate to the output location and open the report.
 
-### Analyze the report
+### 3) Analyze the report
 You will find the following example data:
 
 | **Column A** | **Column B** | **Column C** | **Column D** |
