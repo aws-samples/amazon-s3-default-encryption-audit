@@ -1,4 +1,4 @@
-### Auditing Amazon S3 Default Encryption Configurations at Scale
+## Auditing Amazon S3 Default Encryption Configurations at Scale
 
 ## Overview of solution
 In this post, I will describe how to audit an Amazon S3 bucket’s default encryption configuration at scale with a [Boto3](https://boto3.readthedocs.io/) script. I will show you how to configure the provided script to retrieve the default encryption configuration, KMS key ARN, KMS key type (AWS managed key or customer managed key), and the Amazon S3 Bucket Key configuration on all buckets in all regions. Finally, I will show you how to analyze the output to correlate the SSE configurations for each bucket. This script will perform the [ListBuckets](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBuckets.html), [GetBucketLocation](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketLocation.html), [GetBucketEncryption](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketEncryption.html) API calls to all buckets in all regions. The script will then issue a DescribeKey API call to the AWS KMS key. 
