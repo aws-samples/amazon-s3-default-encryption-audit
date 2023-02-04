@@ -50,6 +50,8 @@ def report_info(file_name, details):
 def sse_kms_bucket_logger():
     # Initialize the Amazon S3 boto3 client.
     s3 = boto3.client("s3")
+    # Set the AWS_Default_Region environment variable to us-east-1 for this session.
+    os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
     # List all Amazon S3 buckets in the account.
     response = s3.list_buckets()
     # Retrieve the bucket name from the response
