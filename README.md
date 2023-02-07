@@ -1,7 +1,8 @@
 # Auditing Amazon S3's Default Encryption Configurations at Scale
 
 ## Overview of solution
-In this post, I will describe how to audit an Amazon S3 bucket’s default encryption configuration at scale with a [Boto3](https://boto3.readthedocs.io/) script. I will show you how to configure the provided script to retrieve the default encryption configuration, KMS key ARN, KMS key type (AWS managed key or customer managed key), and the Amazon S3 Bucket Key configuration on all buckets in all regions. Finally, I will show you how to analyze the output to correlate the SSE configurations for each bucket. This script will perform the [ListBuckets](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBuckets.html), [GetBucketLocation](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketLocation.html), [GetBucketEncryption](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketEncryption.html) API calls to all buckets in all regions. The script will then issue a DescribeKey API call to the AWS KMS key. 
+In this post, I will describe how to audit an Amazon S3 bucket’s default encryption configuration at scale with a Boto3 script. I will show you how to configure the provided script to retrieve the default encryption configuration, KMS key ARN, KMS key type (AWS managed key or customer managed key), and the Amazon S3 Bucket Key configuration on all buckets in all regions. Finally, I will show you how to analyze the output to correlate the SSE configurations for each bucket. 
+This script will perform the [ListBuckets](https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBuckets.html), [GetBucketLocation](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketLocation.html), [GetBucketEncryption](https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetBucketEncryption.html) API calls to all buckets in all regions. The script will then issue a [DescribeKey](https://docs.aws.amazon.com/kms/latest/APIReference/API_DescribeKey.html) API call to the AWS KMS key.  
 
 The following services are used to audit the default server-side encryption mode:
 
@@ -114,7 +115,7 @@ The report is divided into four columns:
   * **AWS KMS Key Alias:** provides the alias for the KMS Key that is configured in the bucket’s default encryption configuration. 
   * **AES256:** indicates that the bucket is configured with SSE-S3 encryption. 
   * **SSEConfigNotFound:** indicates that the bucket has no default encryption configurations.
-  * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the GetBucketEncryption API call.
+  * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the **GetBucketEncryption** API call.
   
 #### Column C
 
@@ -123,16 +124,18 @@ The report is divided into four columns:
   * **N/A:** indicates that SSE-KMS is not configured. 
   * **AccessDenied:** indicates that the IAM user or role does not have the required permissions to perform the **DescribeKey** API call or that the AWS KMS key is located in a different AWS Region than the Amazon S3 bucket. 
   * **Unknown:** indicates that the **DescribeKey** API call could not be performed because the **GetBucketEncryption** API call failed. 
-
+  * **KeyNotFound:** indicates that the **DescribeKey** API call could not be performed due to an invalid AWS KMS key.
+  
 #### Column D 
 
-  * **Null:** indicates that Bucket Key was never configured on this bucket. 
+  * **Empty:** indicates that Bucket Key was never configured on this bucket. 
   * **True:** indicates that Bucket Key is configured on this bucket. 
   * **False:** indicates that Bucket Key was manually set to false.
-
+  * **AccessDenied:** indicates that the **GetBucketEncryption** API call failed. 
+  
 </p></details>
 
-This report can be used to standardize your default bucket encryption configurations across all buckets in all regions. You will be able to easily identify buckets that do not conform with your standardization requirements and identify buckets that do not have Amazon S3 Bucket Key enabled. Using the findings from this report, you will be able to create a plan to remediate buckets that do not follow your standardization requirements and buckets that are not taking advantage of Amazon S3 Bucket Key.
+This report can be used to standardize your default bucket encryption across all AWS Regions. You will be able to easily identify buckets that do not conform with your standardization requirements and identify buckets that do not have Amazon S3 Bucket Key enabled. Using the findings from this report, you will be able to create a plan to remediate buckets that do not follow your standardization requirements and buckets that are not taking advantage of Amazon S3 Bucket Key.
 
 ## Conclusion
 In this post, I showed how you can audit your Amazon S3 bucket’s default encryption configuration at scale by using a Boto3 script. This can help you understand if you need to implement encryption standardizations or if encryption standardization practices are being followed. Using the generated output, you will be able to correlate all the different encryption types all buckets across all regions. Additionally, you will be able to understand which buckets are configured with Amazon S3 Bucket Key to ensure cost optimization features are enabled. Finally, you can also use this script to track which buckets have SSE-S3 enabled and which ones are still pending.
@@ -145,4 +148,3 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
-
