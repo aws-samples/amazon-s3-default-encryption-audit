@@ -4,23 +4,24 @@ import boto3
 from botocore.exceptions import ClientError
 import time
 import os
-
+import csv
+from contextlib import suppress
 
 # Print instructions for using the script.
-print('')
-print('Enter the output location for the report. For example: ')
-print('')
-print('Linux/Mac:  /home/documents/output/')
-print('Windows:  c:/users/jsmith/documents/output/')
-print('')
+print("")
+print("Enter the output location for the report. For example: ")
+print("")
+print("Linux/Mac:  /home/documents/output/")
+print("Windows:  c:/users/jsmith/documents/output/")
+print("")
 # Prompt user to input the output location of the report.
-bucketEncryptionReportLocation = input('Output Location:  ')
-bucketEncryptionReport = bucketEncryptionReportLocation + 'bucketEncryptionReport_' + time.strftime("%Y%m%d-%H%M%S") + '.csv'
+bucketEncryptionReportLocation = input("Output Location:  ")
+bucketEncryptionReport = bucketEncryptionReportLocation + "bucketEncryptionReport_" + time.strftime("%Y%m%d-%H%M%S") + ".csv"
 
 
 
 # Define all the available AWS Regions (including opt-in regions).
-regions_str = 'us-east-1,us-east-2,us-west-1,us-west-2,af-south-1,ap-east-1,ap-south-1,ap-south-2,ap-northeast-1,ap-northeast-2,ap-northeast-3,ap-southeast-1,ap-southeast-2,ca-central-1,eu-central-1,eu-central-2,eu-west-1,eu-west-2,eu-west-3,eu-south-1,eu-south-2,eu-north-1,me-south-1,me-central-1,sa-east-1'
+regions_str = "us-east-1,us-east-2,us-west-1,us-west-2,af-south-1,ap-east-1,ap-south-1,ap-south-2,ap-northeast-1,ap-northeast-2,ap-northeast-3,ap-southeast-1,ap-southeast-2,ca-central-1,eu-central-1,eu-central-2,eu-west-1,eu-west-2,eu-west-3,eu-south-1,eu-south-2,eu-north-1,me-south-1,me-central-1,sa-east-1"
 regions = regions_str.split(",")
 
 # Create empty output files to store report.
@@ -33,12 +34,26 @@ def is_client_error(code):
         return ClientError
     return type("NeverEverRaisedException", (Exception,), {})
 
+# Create function to add headers into the the CSV file.
+def appendHeaders():
+    # Define column headers.
+    row = ["Bucket Name", "Default Encryption Mode", "SSE-KMS Key Type", "Bucket Key"]
+    with open(bucketEncryptionReport, "r") as rFile:
+        read = csv.reader(rFile)
+        rows = list(read)
+        rows.insert(0, row)
+    # Write column headers on the first row.
+    with open(bucketEncryptionReport, "w",newline="") as wFile:
+        write = csv.writer(wFile)
+        write.writerows(rows)
+    # Close CSV file.
+    rFile.close()
+    wFile.close()
+
 # Create function to print the data into the CSV file.
 def report_info(file_name, details):
-    print(
-        details,
-        file=open(file_name, "a"),
-    )
+    # Print data into the CSV file.
+    print(details, file=open(file_name, "a"),)
 
 
 
@@ -47,7 +62,7 @@ def sse_kms_bucket_logger():
     # Initialize the Amazon S3 boto3 client.
     s3 = boto3.client("s3")
     # Set the AWS_Default_Region environment variable to us-east-1 for this session.
-    os.environ['AWS_DEFAULT_REGION'] = 'us-east-1'
+    os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
     # List all Amazon S3 buckets in the account.
     response = s3.list_buckets()
     # Retrieve the bucket name from the response
@@ -55,13 +70,15 @@ def sse_kms_bucket_logger():
     # Create a for loop to peform an action on all Amazon S3 buckets in the account.
     report_dict = []
     for bucket in buckets:
-        myBuckets = bucket.get("Name")
-        #sets s3 client region depending on the bucket
-        response = s3.get_bucket_location(Bucket=myBuckets)
-        location=response['LocationConstraint']
-        s3 = boto3.client('s3', region_name=location)
-        endpointUrl = s3.meta.endpoint_url
-        s3 = boto3.client('s3', endpoint_url=endpointUrl, region_name=location)
+        with suppress(Exception):
+            myBuckets = bucket.get("Name")
+            #sets s3 client region depending on the bucket
+            response = s3.get_bucket_location(Bucket=myBuckets)
+            location=response["LocationConstraint"]
+
+            s3 = boto3.client("s3", region_name=location)
+            endpointUrl = s3.meta.endpoint_url
+            s3 = boto3.client("s3", endpoint_url=endpointUrl, region_name=location)
         try:
             # Run the GetBucketEncryption on all Amazon S3 buckets in all AWS Regions.
             # Determine the type of encryption key that is configured an Amazon S3 bucket and if Amazon S3 Bucket Key is enabled.
@@ -105,7 +122,7 @@ def sse_kms_bucket_logger():
             # Check your AWS IAM policy and the Amazon S3 bucket policy to see if you have the s3:GetEncryptionConfiguration permissions for the Amazon S3 bucket.
             report_info(
                 bucketEncryptionReport,
-                "{0}, {1}, {2}".format(myBuckets, "AccessDenied", "Unknown", "Unknown"),
+                "{0}, {1}, {2}, {3}".format(myBuckets, "AccessDenied", "Unknown", "Unknown"),
             )
     return report_dict
 
@@ -133,18 +150,14 @@ def key_type_check(reported_data, kms,region):
             except is_client_error("AccessDeniedException"):
                 report_info(
                     bucketEncryptionReport,
-                    "{0}, {1}, {2}, {3}".format(
-                        bucket, KMS_Key, "AccessDenied", bucketKeyStatus
-                    ),
+                    "{0}, {1}, {2}, {3}".format(bucket, KMS_Key, "AccessDenied", bucketKeyStatus),
                 )
             # Catch and write NotFoundException errors when performing the DescribeKey API.
             # CHeck to see if the AWS KMS key is valid.
             except is_client_error("NotFoundException"):
                 report_info(
                     bucketEncryptionReport,
-                    "{0}, {1}, {2}, {3}".format(
-                        bucket, KMS_Key, "keyNotFound", bucketKeyStatus
-                    ),
+                    "{0}, {1}, {2}, {3}".format(bucket, KMS_Key, "KeyNotFound", bucketKeyStatus),
                 )
 
 
@@ -161,13 +174,15 @@ def report_executor():
 
 
 
+
+
 # Execute report function.
 if __name__ == '__main__' :
+    appendHeaders()
     report_executor()
-
 
 
 # Print the report's output location.
 print("")
-print('You can now access the report in the following location:  ')
+print("You can now access the report in the following location:  ")
 print(bucketEncryptionReport)
