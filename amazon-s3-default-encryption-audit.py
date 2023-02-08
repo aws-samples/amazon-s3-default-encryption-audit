@@ -36,19 +36,14 @@ def is_client_error(code):
 
 # Create function to add headers into the the CSV file.
 def appendHeaders():
-    # Define column headers.
-    row = ["Bucket Name", "Default Encryption Mode", "SSE-KMS Key Type", "Bucket Key"]
-    with open(bucketEncryptionReport, "r") as rFile:
-        read = csv.reader(rFile)
-        rows = list(read)
-        rows.insert(0, row)
-    # Write column headers on the first row.
-    with open(bucketEncryptionReport, "w",newline="") as wFile:
-        write = csv.writer(wFile)
-        write.writerows(rows)
-    # Close CSV file.
-    rFile.close()
-    wFile.close()
+    #Specifying the headers to be added to the CSV file
+    headers = ["Bucket Name", "Default Encryption Mode", "SSE-KMS Key Type", "Bucket Key"]
+    #Opening the CSV file in write mode
+    with open(bucketEncryptionReport, "w", newline="") as csvfile:
+        #Creating a CSV writer object
+        csvwriter = csv.writer(csvfile)
+        #Writing the headers to the CSV file
+        csvwriter.writerow(headers)
 
 # Create function to print the data into the CSV file.
 def report_info(file_name, details):
@@ -122,7 +117,7 @@ def sse_kms_bucket_logger():
             # Check your AWS IAM policy and the Amazon S3 bucket policy to see if you have the s3:GetEncryptionConfiguration permissions for the Amazon S3 bucket.
             report_info(
                 bucketEncryptionReport,
-                "{0}, {1}, {2}, {3}".format(myBuckets, "AccessDenied", "Unknown", "Unknown"),
+                "{0}, {1}, {2}, {3}".format(myBuckets, "AccessDenied", "Unknown", "AccessDenied"),
             )
     return report_dict
 
