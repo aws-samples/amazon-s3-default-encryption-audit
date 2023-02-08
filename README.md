@@ -54,6 +54,8 @@ The IAM policy for the IAM user or role that is running this script needs to hav
 ```
 
 You also need to ensure that the SSE-KMS customer managed keys allow the IAM role or user access as well. Click [here](https://docs.aws.amazon.com/kms/latest/developerguide/key-policy-default.html#key-policy-default-allow-administrators) for more information about creating a KMS Key policy. 
+
+If you have Amazon S3 buckets in opt-in AWS Regions, the IAM role or user must have credentials that are enabled for these AWS Regions. 
  
 </p></details>
 
