@@ -128,7 +128,7 @@ The report is divided into four columns:
   
 #### Column D 
 
-  * **Empty:** indicates that Bucket Key was never configured on this bucket. 
+  * **Empty:** indicates that SSE-KMS is not configured on this bucket; Bucket Key is not being used.
   * **True:** indicates that Bucket Key is configured on this bucket. 
   * **False:** indicates that Bucket Key was manually set to false.
   * **AccessDenied:** indicates that the **GetBucketEncryption** API call failed. 
