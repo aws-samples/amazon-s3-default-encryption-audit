@@ -1,9 +1,9 @@
 # Import modules.
-import sys
 import boto3
 from botocore.exceptions import ClientError
-import time
+import sys
 import os
+import time
 import csv
 from contextlib import suppress
 
