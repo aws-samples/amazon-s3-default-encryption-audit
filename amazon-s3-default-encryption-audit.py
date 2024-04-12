@@ -1,6 +1,5 @@
 # Import modules.
 import boto3
-from botocore.exceptions import ClientError
 import sys
 import os
 import time
@@ -27,12 +26,6 @@ regions = regions_str.split(",")
 # Create empty output files to store report.
 open(bucketEncryptionReport, "a").close()
 
-# Create function to handle client errors (4xx errors).
-def is_client_error(code):
-    e = sys.exc_info()[1]
-    if isinstance(e, ClientError) and e.response["Error"]["Code"] == code:
-        return ClientError
-    return type("NeverEverRaisedException", (Exception,), {})
 
 # Create function to add headers into the the CSV file.
 def appendHeaders():
@@ -53,6 +46,7 @@ def report_info(file_name, details):
 
 
 # Retrieve the default bucket encryption configuration for all buckets in all AWS Regions.
+# Retrieve the default bucket encryption configuration for all buckets in all AWS Regions.
 def sse_kms_bucket_logger():
     # Initialize the Amazon S3 boto3 client.
     s3 = boto3.client("s3")
@@ -62,69 +56,70 @@ def sse_kms_bucket_logger():
     response = s3.list_buckets()
     # Retrieve the bucket name from the response
     buckets = response.get("Buckets")
-    # Create a for loop to peform an action on all Amazon S3 buckets in the account.
+    # Create a for loop to perform an action on all Amazon S3 buckets in the account.
     report_dict = []
     for bucket in buckets:
         with suppress(Exception):
             myBuckets = bucket.get("Name")
-            #sets s3 client region depending on the bucket
+            # Sets s3 client region depending on the bucket
             response = s3.get_bucket_location(Bucket=myBuckets)
-            location=response["LocationConstraint"]
+            location = response["LocationConstraint"]
 
             s3 = boto3.client("s3", region_name=location)
             endpointUrl = s3.meta.endpoint_url
             s3 = boto3.client("s3", endpoint_url=endpointUrl, region_name=location)
-        try:
-            # Run the GetBucketEncryption on all Amazon S3 buckets in all AWS Regions.
-            # Determine the type of encryption key that is configured an Amazon S3 bucket and if Amazon S3 Bucket Key is enabled.
-            resp = s3.get_bucket_encryption(Bucket=myBuckets)
-            kms_key = resp["ServerSideEncryptionConfiguration"]["Rules"][0][
-                "ApplyServerSideEncryptionByDefault"
-            ]["KMSMasterKeyID"]
-            bucketKey = str(
-                resp["ServerSideEncryptionConfiguration"]["Rules"][0][
-                    "BucketKeyEnabled"
-                ]
-            )
-            for region in regions:
-                # Create variables for regional KMS Key ARNs:
-                key_region_arn = "arn:aws:kms:{0}".format(region)
-                if kms_key.startswith(key_region_arn):
-                    data = {
-                        "region": region,
-                        "bucket": myBuckets,
-                        "kmsKey": kms_key,
-                        "bucketStatus": bucketKey,
-                    }
-                    report_dict.append(data)
-        except KeyError as b:
-            # Print buckets that are configured with SSE-S3 encryption keys.
-            sse_type = resp["ServerSideEncryptionConfiguration"]["Rules"][0][
-                "ApplyServerSideEncryptionByDefault"
-            ]["SSEAlgorithm"]
-            report_info(
-                bucketEncryptionReport,
-                "{0}, {1}, {2}".format(myBuckets, sse_type, "N/A"),
-            )
-        except is_client_error("ServerSideEncryptionConfigurationNotFoundError"):
-            # Print buckets where no Default Encryption Configurations were found.
-            report_info(
-                bucketEncryptionReport,
-                "{0}, {1}, {2}".format(myBuckets, "SSEConfigNotFound", "N/A"),
-            )
-        except is_client_error("AccessDenied"):
-            # Catch and write AccessDenied errors when making the GetBucketEncryption API call.
-            # Check your AWS IAM policy and the Amazon S3 bucket policy to see if you have the s3:GetEncryptionConfiguration permissions for the Amazon S3 bucket.
-            report_info(
-                bucketEncryptionReport,
-                "{0}, {1}, {2}, {3}".format(myBuckets, "AccessDenied", "Unknown", "AccessDenied"),
-            )
+            try:
+                # Run the GetBucketEncryption on all Amazon S3 buckets in all AWS Regions.
+                # Determine the type of encryption key that is configured an Amazon S3 bucket and if Amazon S3 Bucket Key is enabled.
+                resp = s3.get_bucket_encryption(Bucket=myBuckets)
+                encryption_rules = resp.get("ServerSideEncryptionConfiguration", {}).get("Rules", [])
+                if encryption_rules:
+                    encryption = encryption_rules[0].get("ApplyServerSideEncryptionByDefault", {})
+                    if "KMSMasterKeyID" in encryption:
+                        kms_key = encryption["KMSMasterKeyID"]
+                        bucketKey = str(encryption.get("BucketKeyEnabled", False))
+                        for region in regions:
+                            # Create variables for regional KMS Key ARNs:
+                            key_region_arn = "arn:aws:kms:{0}".format(region)
+                            if kms_key.startswith(key_region_arn):
+                                data = {
+                                    "region": region,
+                                    "bucket": myBuckets,
+                                    "kmsKey": kms_key,
+                                    "bucketStatus": bucketKey,
+                                }
+                                report_dict.append(data)
+                    else:
+                        # Handle SSE-S3 encryption
+                        sse_type = encryption.get("SSEAlgorithm", "SSE-S3")
+                        report_info(
+                            bucketEncryptionReport,
+                            "{0}, {1}, {2}".format(myBuckets, sse_type, "N/A"),
+                        )
+                else:
+                    # Handle case where no encryption configuration is found
+                    report_info(
+                        bucketEncryptionReport,
+                        "{0}, {1}, {2}".format(myBuckets, "SSEConfigNotFound", "N/A"),
+                    )
+
+            except s3.exceptions.ClientError as e:
+                error_code = e.response.get('Error', {}).get('Code')
+                if error_code == 'AccessDenied':
+                    # Catch and write AccessDenied errors when making the GetBucketEncryption API call.
+                    # Check your AWS IAM policy and the Amazon S3 bucket policy to see if you have the s3:GetEncryptionConfiguration permissions for the Amazon S3 bucket.
+                    report_info(
+                        bucketEncryptionReport,
+                        "{0}, {1}, {2}, {3}".format(myBuckets, "AccessDenied", "Unknown", "AccessDenied"),
+                    )
+                else:
+                    raise
     return report_dict
 
 
 
 # Determine if the SSE-KMS key being used is an AWS managed key or a customer managed key.
-def key_type_check(reported_data, kms,region):
+def key_type_check(reported_data, kms, region):
     for item in reported_data:
         # Provide a title for each row.
         if region == item["region"]:
@@ -142,18 +137,22 @@ def key_type_check(reported_data, kms,region):
             # Catch and write AccessDenied errors when performing the DescribeKey API.
             # Check your AWS IAM Policy and AWS KMS key permissions to see if you have the kms:DescribeKey permissions for the AWS KMS key.
             # Check to to see if the AWS KMS key is located in the same AWS Region as your Amazon S3 bucket.
-            except is_client_error("AccessDeniedException"):
-                report_info(
-                    bucketEncryptionReport,
-                    "{0}, {1}, {2}, {3}".format(bucket, KMS_Key, "AccessDenied", bucketKeyStatus),
-                )
-            # Catch and write NotFoundException errors when performing the DescribeKey API.
-            # CHeck to see if the AWS KMS key is valid.
-            except is_client_error("NotFoundException"):
-                report_info(
-                    bucketEncryptionReport,
-                    "{0}, {1}, {2}, {3}".format(bucket, KMS_Key, "KeyNotFound", bucketKeyStatus),
-                )
+            except kms.exceptions.ClientError as e:
+                error_code = e.response.get('Error', {}).get('Code')
+                if error_code == "AccessDeniedException":
+                    report_info(
+                        bucketEncryptionReport,
+                        "{0}, {1}, {2}, {3}".format(bucket, KMS_Key, "AccessDenied", bucketKeyStatus),
+                    )
+                elif error_code == "NotFoundException":
+                    report_info(
+                        bucketEncryptionReport,
+                        "{0}, {1}, {2}, {3}".format(bucket, KMS_Key, "KeyNotFound", bucketKeyStatus),
+                    )
+                else:
+                    raise
+
+
 
 
 
